@@ -42,7 +42,6 @@ features = [
 ]
 
 X = df[features]
-
 y = df["Survived"]
 
 # --------------------------------
@@ -60,43 +59,18 @@ X = scaler.fit_transform(X)
 @st.cache_resource
 def train_model():
 
-    model=tf.keras.Sequential([
-
-        tf.keras.layers.Dense(
-            8,
-            activation='relu',
-            input_shape=(3,)
-        ),
-
-        tf.keras.layers.Dense(
-            4,
-            activation='relu'
-        ),
-
-        tf.keras.layers.Dense(
-            1,
-            activation='sigmoid'
-        )
-
-    ])
-
-    model.compile(
-        optimizer='adam',
-        loss='binary_crossentropy',
-        metrics=['accuracy']
+    model = MLPClassifier(
+        hidden_layer_sizes=(8,4),
+        activation='relu',
+        max_iter=500,
+        random_state=42
     )
 
-    model.fit(
-        X,
-        y,
-        epochs=20,
-        verbose=0
-    )
+    model.fit(X,y)
 
     return model
 
-
-model=train_model()
+model = train_model()
 
 # --------------------------------
 # HEADER
@@ -120,7 +94,7 @@ Deep Learning Based Passenger Survival Prediction
 unsafe_allow_html=True
 )
 
-c1,c2,c3=st.columns([2,1,2])
+c1,c2,c3 = st.columns([2,1,2])
 
 with c2:
     st.image(
@@ -140,20 +114,15 @@ st.markdown(
 
 <p>
 This application predicts whether a passenger
-would survive on Titanic using an
-Artificial Neural Network.
+would survive using an Artificial Neural Network.
 </p>
 
-<p>Model built using:</p>
+<p>Technologies Used:</p>
 
-<p>✅ TensorFlow</p>
-<p>✅ Deep Learning</p>
-<p>✅ ANN Architecture</p>
-
-<p>
-The model trains directly from the dataset
-inside Streamlit.
-</p>
+<p>✅ ANN Model</p>
+<p>✅ Streamlit</p>
+<p>✅ Titanic Dataset</p>
+<p>✅ Machine Learning Deployment</p>
 
 </div>
 """,
@@ -173,18 +142,18 @@ st.markdown(
 unsafe_allow_html=True
 )
 
-col1,col2,col3=st.columns(3)
+col1,col2,col3 = st.columns(3)
 
 with col1:
 
-    pclass=st.selectbox(
+    pclass = st.selectbox(
         "Passenger Class",
         [1,2,3]
     )
 
 with col2:
 
-    age=st.slider(
+    age = st.slider(
         "Age",
         1,
         80,
@@ -193,14 +162,12 @@ with col2:
 
 with col3:
 
-    fare=st.number_input(
+    fare = st.number_input(
         "Fare",
         min_value=0.0,
         max_value=600.0,
         value=50.0
     )
-
-st.write("")
 
 # --------------------------------
 # PREDICT BUTTON
@@ -210,28 +177,21 @@ if st.button(
     "Predict Survival"
 ):
 
-    user=np.array([
-        [pclass,age,fare]
-    ])
+    user = np.array(
+        [[pclass,age,fare]]
+    )
 
-    user=scaler.transform(
+    user = scaler.transform(user)
+
+    prob = model.predict_proba(
         user
-    )
+    )[0][1]
 
-    prediction=model.predict(
-        user,
-        verbose=0
-    )
+    non_prob = 1 - prob
 
-    prob=float(
-        prediction[0][0]
-    )
+    if prob > 0.5:
 
-    non_prob=1-prob
-
-    if prob>0.5:
-
-        result="Survived"
+        result = "Survived"
 
         st.success(
             "Passenger likely survives"
@@ -239,19 +199,19 @@ if st.button(
 
     else:
 
-        result="Not Survived"
+        result = "Not Survived"
 
         st.error(
             "Passenger likely may not survive"
         )
 
-    confidence=max(
+    confidence = max(
         prob,
         non_prob
     )*100
 
 # --------------------------------
-# OUTPUT AREA
+# OUTPUT
 # --------------------------------
 
     st.markdown(
@@ -263,7 +223,7 @@ if st.button(
     unsafe_allow_html=True
     )
 
-    a,b,c=st.columns(3)
+    a,b,c = st.columns(3)
 
     with a:
 
@@ -287,7 +247,7 @@ if st.button(
         )
 
 # --------------------------------
-# SMALL CENTERED GRAPH
+# SMALL GRAPH
 # --------------------------------
 
     st.markdown(
@@ -299,28 +259,25 @@ if st.button(
     unsafe_allow_html=True
     )
 
-    x,y,z=st.columns([1,2,1])
+    x,y,z = st.columns([1,2,1])
 
     with y:
 
-        fig,ax=plt.subplots(
+        fig,ax = plt.subplots(
             figsize=(3,3)
         )
 
-        labels=[
+        labels = [
             "Survival",
             "Non Survival"
         ]
 
-        values=[
+        values = [
             prob,
             non_prob
         ]
 
-        explode=[
-            0.05,
-            0
-        ]
+        explode = [0.05,0]
 
         ax.pie(
             values,
@@ -341,5 +298,5 @@ if st.button(
 st.markdown("---")
 
 st.caption(
-    "Built using TensorFlow + Streamlit"
+    "Built using Streamlit + ANN"
 )
