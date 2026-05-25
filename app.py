@@ -1,8 +1,8 @@
 import streamlit as st
-import tensorflow as tf
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.neural_network import MLPClassifier
 import matplotlib.pyplot as plt
 
 # --------------------------------
