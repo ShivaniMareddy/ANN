@@ -1,6 +1,6 @@
 streamlit==1.57.0
-tensorflow==2.15.1
-numpy
+tensorflow==2.20.0
 pandas
+numpy
 scikit-learn
-plotly>=5.15.0
+matplotlib
